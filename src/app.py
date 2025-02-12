@@ -13,7 +13,7 @@ app.url_map.strict_slashes = False
 CORS(app)
 
 # create the jackson family object
-jackson_family = FamilyStructure("Jackson")
+jackson_family = FamilyStructure("Jackson")  
 
 # Handle/serialize errors like a JSON object
 @app.errorhandler(APIException)
@@ -26,17 +26,55 @@ def sitemap():
     return generate_sitemap(app)
 
 @app.route('/members', methods=['GET'])
-def handle_hello():
+def handle_hello(): 
+    members=jackson_family.get_all_members()  
+    response_body=members
+    return jsonify(response_body),200
 
-    # this is how you can use the Family datastructure by calling its methods
-    members = jackson_family.get_all_members()
-    response_body = {
-        "hello": "world",
-        "family": members
-    }
+@app.route('/member', methods=['POST'])
+def add_a_member(): 
+    try: 
+        request_body=request.get_json() 
+        if not request_body: 
+            return jsonify({"msg":"not request body"}),400
+        jackson_family.add_member(request_body)
+        return jsonify("member added"),200 
+    except:
+        return jsonify({"msg":"internal server error"}),500  
+    
+@app.route('/member/<int:id>', methods=['GET'])
+def get_member(id): 
+    try: 
+        member=jackson_family.get_member(id)
+        if member: 
+            return jsonify(member),200 
+        else:
+            return jsonify({"msg":"no member found"}),400 
+    except:
+        return jsonify({"msg":"internal server error"}),500
+   
 
 
-    return jsonify(response_body), 200
+
+@app.route('/member/<int:id>', methods=['DELETE'])
+def delete_a_member(id): 
+    try: 
+        deleted=jackson_family.delete_member(id)
+        if not deleted:         
+            return jsonify({'done':False}),400 
+        return jsonify({'done':True}),200 
+    except:
+        return jsonify({"msg":"internal server error"}),500
+   
+   
+    # # this is how you can use the Family datastructure by calling its methods
+    # members = jackson_family.get_all_members()
+    # response_body = {
+    #     "hello": "world",
+    #     "family": members
+    # }
+
+
 
 # this only runs if `$ python src/app.py` is executed
 if __name__ == '__main__':
