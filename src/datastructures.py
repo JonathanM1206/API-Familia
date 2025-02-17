@@ -13,30 +13,28 @@ class FamilyStructure:
         self.last_name = last_name 
          
         self._members = [ 
-        {  
-        "id":3443,   
-        "first_name":"Tommy", 
-        "last_name":last_name, 
-        "age":33, 
-        "lucky_numbers":[7,13,22]
-
-        } , 
-        {  
-        "id":self._generateId(),
-        "first_name":"Jane", 
-        "last_name":last_name, 
-        "age":35, 
-        "lucky_numbers":[10,14,3]
-       } ,  
-        {   
-        "id":self._generateId(),
-        "first_name":"Jimmy", 
-        "last_name":last_name, 
-        "age":5, 
-        "lucky_numbers":[1]
-        }
-
-        ]
+            {
+                "id": self._generateId(),
+                "first_name":"John",
+               "last_name":self.last_name,
+               "age":33,
+               "lucky_numbers":[7,13,22]
+            },
+            {
+                "id": self._generateId(),
+                "first_name":"Jane",
+               "last_name":self.last_name,
+               "age":35,
+               "lucky_numbers":[10,14,3]
+            },{
+                "id": self._generateId(),
+                "first_name":"Jimmy",
+               "last_name":self.last_name,
+               "age":5,
+               "lucky_numbers":[1]
+            }
+        
+                           ]
 
         
 
@@ -46,7 +44,7 @@ class FamilyStructure:
 
     def add_member(self, member):
         new_member={
-        "id":self._generateId(),
+        "id": member.get("id", self._generateId()),
         "first_name":member.get("first_name"), 
         "last_name":self.last_name, 
         "age":member.get("age"), 
@@ -54,17 +52,20 @@ class FamilyStructure:
         }
 
         self._members.append(new_member)
+        return new_member
 
     def delete_member(self, id):
-        for member in self._members: 
-            if member["id"]==id: 
-               self._members.remove(member)
-               return member
+        for index in range(0,len(self._members)):
+            if self._members[index].get("id")==id:
+                return self._members.pop(index)
+        return None   
+               
 
     def get_member(self, id):
-        for member in self._members: 
-            if member["id"]==id: 
-               return member
+        for member in self._members:
+            if member.get("id")==id:
+                return member
+        return None
                    
     # this method is done, it returns a list with all the family members
     def get_all_members(self):
